@@ -8,9 +8,17 @@ namespace ParmenionGame
 {
     public class GameHub : Hub
     {
-        public async Task SendMessage(string message)
+        private readonly GameState state;
+
+        public GameHub(GameState state)
         {
-            await Clients.All.SendAsync("ReceiveMessage", message);
+            this.state = state;
+        }
+
+        public async Task RegisterDashboard()
+        {
+            await Clients.Caller.SendAsync("JoinGameCode", "DEF");
+            this.state.JoinGame("DEF", (int timeRemaining) => Clients.Caller.SendAsync("JoinGameCountdown", timeRemaining));
         }
     }
 }

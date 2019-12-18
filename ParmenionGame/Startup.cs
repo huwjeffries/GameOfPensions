@@ -23,9 +23,11 @@ namespace ParmenionGame
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
-            services.AddHostedService<TimedHostedService>();
+            services.AddHostedService<GameService>();
             services.AddSignalR();
-            services.AddSingleton<GameHub>();
+            services
+                .AddSingleton<GameHub>()
+                .AddSingleton<GameState>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
