@@ -2,26 +2,19 @@
 
 var connection = new signalR.HubConnectionBuilder().withUrl("/gameHub").build();
 
-//Disable send button until connection is established
-document.getElementById("sendButton").disabled = true;
-
-connection.on("ReceiveMessage", function (message) {
-    var encodedMsg = message.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");    
-    var li = document.createElement("li");
-    li.textContent = encodedMsg;
-    document.getElementById("messagesList").appendChild(li);
-});
+function errorReport(err) {
+    return console.error(err.toString());
+}
 
 connection.start().then(function () {
-    document.getElementById("sendButton").disabled = false;
-}).catch(function (err) {
-    return console.error(err.toString());
-});
+    $("#loading").hide();
+    $("#join-game-frame").show();
+}).catch(errorReport);
 
-document.getElementById("sendButton").addEventListener("click", function (event) {
-    var message = document.getElementById("messageInput").value;
-    connection.invoke("SendMessage", message).catch(function (err) {
-        return console.error(err.toString());
-    });
+// Wait for jquery to be ready
+document.getElementById("join-game-submit").addEventListener("click", function (event) {
+    var code = $("#gamecode").val();
+    var name = $("#name").val();
+    connection.invoke("JoinGame", code, name).catch(errorReport);
     event.preventDefault();
 });

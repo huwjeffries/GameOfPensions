@@ -19,6 +19,10 @@ connection.on("ShowQuestion", function (message) {
     document.getElementById("question").innerHTML = message;
 });
 
+connection.on("UpdatePlayerList", function (message) {
+    document.getElementById("player-list").innerHTML = message;
+});
+
 connection.start().then(function () {
     connection.invoke("RegisterDashboard");
 }).catch(errorReport);
