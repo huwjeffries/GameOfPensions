@@ -8,11 +8,11 @@ using Microsoft.Extensions.Logging;
 
 namespace ParmenionGame.Pages
 {
-    public class IndexModel : PageModel
+    public class DashboardModel : PageModel
     {
-        private readonly ILogger<IndexModel> _logger;
+        private readonly ILogger<DashboardModel> _logger;
 
-        public IndexModel(ILogger<IndexModel> logger)
+        public DashboardModel(ILogger<DashboardModel> logger)
         {
             _logger = logger;
         }
