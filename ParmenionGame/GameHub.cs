@@ -18,7 +18,12 @@ namespace ParmenionGame
         public async Task RegisterDashboard()
         {
             await Clients.Caller.SendAsync("JoinGameCode", "DEF");
-            this.state.JoinGame("DEF", (int timeRemaining) => Clients.Caller.SendAsync("JoinGameCountdown", timeRemaining));
+            this.state.CreateGame("DEF", (int timeRemaining) => Clients.Caller.SendAsync("JoinGameCountdown", timeRemaining));
+        }
+
+        public async Task JoinGame(string code, string name)
+        {
+            //this.state.JoinGame(code, this.Context.ConnectionId);
         }
     }
 }

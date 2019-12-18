@@ -12,7 +12,7 @@ namespace ParmenionGame
         {
         }
 
-        public void JoinGame(string code, Action<int> joinGameAction)
+        public void CreateGame(string code, Action<int> joinGameAction)
         {
             this.Countdown(10, joinGameAction);
         }
