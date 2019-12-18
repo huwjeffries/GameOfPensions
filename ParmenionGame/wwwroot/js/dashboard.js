@@ -14,6 +14,11 @@ connection.on("JoinGameCountdown", function (message) {
     document.getElementById("join-game-countdown").innerHTML = message;
 });
 
+connection.on("ShowQuestion", function (message) {
+    document.getElementById("join-game-code").hidden = true;
+    document.getElementById("question").innerHTML = message;
+});
+
 connection.start().then(function () {
     connection.invoke("RegisterDashboard");
 }).catch(errorReport);

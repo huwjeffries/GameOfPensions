@@ -5,33 +5,49 @@ namespace ParmenionGame
 {
     public class GameState
     {
-        private Timer _timer;
-        private int countdownTime = 0;
+        private int questionNumber = 0;
+        private Question[] questions =
+        {
+            new Question()
+            {
+                QuestionText = "What do you get if you multiply 6 by 7?",
+                Answers = new string[]{ "42", "35", "56"}
+            },
+            new Question()
+            {
+                QuestionText = "What is the Queen's favourite animal?",
+                Answers = new string[]{ "Corgi", "Monkey", "Spider", "Horse" }
+            }
+        };
+
+        private Action<int> countdownProgressAction = null;
+        private Action<Question> nextQuestionAction = null;
 
         public GameState()
         {
         }
 
-        public void CreateGame(string code, Action<int> joinGameAction)
+        public void JoinGameCountdown(string code, Action<int> countdownProgressAction, Action<Question> nextQuestionAction)
         {
-            this.Countdown(10, joinGameAction);
+            questionNumber = 0;
+            this.countdownProgressAction = countdownProgressAction;
+            this.nextQuestionAction = nextQuestionAction;
+            var countdown = new Countdown(10, countdownProgressAction, NextQuestion);
         }
 
-        private void Countdown(int totalTime, Action<int> joinGameAction)
+        public void NextQuestion()
         {
-            countdownTime = totalTime;
-            _timer = new Timer(DoCountdown, joinGameAction, TimeSpan.Zero, TimeSpan.FromSeconds(1));
-        }
-
-        private void DoCountdown(object countdownCallback)
-        {
-            countdownTime--;
-            if (countdownTime <= 0)
+            if(questionNumber == questions.Length)
             {
-                _timer.Change(Timeout.Infinite, 0);
+                //Game finished#
+                int breakpoint = 1;
+            } else
+            {
+                nextQuestionAction(questions[questionNumber++]);
+                var countdown = new Countdown(10, countdownProgressAction, NextQuestion);
             }
-            var callback = (Action<int>)countdownCallback;
-            callback(countdownTime);
         }
+
+        
     }
 }
