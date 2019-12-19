@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -36,7 +37,7 @@ namespace ParmenionGame
         public GameState(ILogger<GameState> logger, IHubContext<GameHub, IGameHub> hubContext)
         {
             this.logger = logger;
-            this.hubContext = hubContext;
+            this.hubContext = hubContext;            
         }
 
         /// <summary>
@@ -86,8 +87,8 @@ namespace ParmenionGame
                 countdown = null;
             }
             gamePlayers.Clear();  //TODO - do we need to disconnect existing players?
-            questionNumber = 0;            
-            gameCode = "def";  //TODO - generate random letters lowercase
+            questionNumber = 0;
+            gameCode = GenerateRandomGameCode();
             isGameInProgres = false;
             logger.LogDebug($"Created game with code '{gameCode}'");
 
@@ -95,6 +96,18 @@ namespace ParmenionGame
             await hubContext.Clients.Client(dashboardConnectionId).ShowDashboardJoinGameCode(gameCode);
             await hubContext.Clients.AllExcept(dashboardConnectionId).ShowPlayerNewGameReady();
             countdown = new Countdown(20, BroadcastCountdownProgress, BeginRounds);
+        }
+
+        private string GenerateRandomGameCode()
+        {
+            Random random = new Random();
+            var sb = new StringBuilder();
+            for (int x = 0; x < 3; x++)
+            {
+                int a = random.Next(0, 26);
+                sb.Append((char)('a' + a));
+            }
+            return sb.ToString();
         }
 
         private async Task BroadcastCountdownProgress(int timeRemaining)
@@ -134,6 +147,7 @@ namespace ParmenionGame
             await hubContext.Clients.Client(dashboardConnectionId).ShowGameFinished("foo");
             foreach (var player in gamePlayers)
             {
+                // Sends a message requesting the players disconnect. We can't break the connection from server-side code.
                 await hubContext.Clients.Client(player.ConnectionId).Disconnect();
             }
 
