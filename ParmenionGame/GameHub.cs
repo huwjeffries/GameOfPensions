@@ -29,5 +29,10 @@ namespace ParmenionGame
         {
             await this.state.RegisterPlayer(code, name, this.Context.ConnectionId);
         }
+
+        public async Task PlayerAnswer(int answerIndex)
+        {
+            await state.PlayerAnswer(answerIndex, this.Context.ConnectionId);
+        }
     }
 }

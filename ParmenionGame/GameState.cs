@@ -74,6 +74,13 @@ namespace ParmenionGame
             }
         }
 
+        public async Task PlayerAnswer(int answerIndex, string playerConnectionId)
+        {
+            //TODO - record the answer against the player for this round. Remember they might change their mind!
+            //We also have a possible race condition if the round has moved on while the message was in flight.
+            await hubContext.Clients.Client(playerConnectionId).ShowPlayerAnswerAccepted(answerIndex);
+        }
+
 
         /// <summary>
         /// Reset the game state.
@@ -95,7 +102,7 @@ namespace ParmenionGame
             //Show the game code and start the countdown
             await hubContext.Clients.Client(dashboardConnectionId).ShowDashboardJoinGameCode(gameCode);
             await hubContext.Clients.AllExcept(dashboardConnectionId).ShowPlayerNewGameReady();
-            countdown = new Countdown(20, BroadcastCountdownProgress, BeginRounds);
+            countdown = new Countdown(15, BroadcastCountdownProgress, BeginRounds);
         }
 
         private string GenerateRandomGameCode()

@@ -28,10 +28,35 @@ connection.on("ShowPlayerGameInProgress", function (message) {
     $("#join-game-view").hide();
 });
 
-
 connection.on("ShowPlayerNewGameReady", function (message) {
     $("#waiting-next-game-view").hide();
     $("#join-game-view").show();
+});
+
+connection.on("ShowPlayerQuestionAnswers", function (answers) {
+    $("#join-game-view").hide();
+    $("#answers-view").html("");
+    $("#answers-view").show();
+    var view = $("#answers-view");
+
+    answers.forEach((answer, i) => {
+        var hyperLink = $('<a/>', {
+            'class': 'link, answer',
+            'href': '#',
+            'click': function () { submitAnswer(i); }
+        }).text(answer);
+
+        view.append(hyperLink);
+    });
+});
+
+function submitAnswer(index) {
+    connection.invoke("PlayerAnswer", index).catch(errorReport);
+}
+
+connection.on("ShowPlayerAnswerAccepted", function (answerIndex) {
+    $("#answers-view a").removeClass("confirmedAnswer");
+    $("#answers-view a:nth-child(" + (answerIndex+1) + ")").addClass("confirmedAnswer");
 });
 
 connection.on("Countdown", function (message) {
@@ -40,8 +65,8 @@ connection.on("Countdown", function (message) {
 
 connection.on("Disconnect", function () {
     connection.stop();
-    setTimeout(function () { window.location.reload() }, 30);
-})
+    setTimeout(function () { window.location.reload(); }, 30);
+});
 
 // Wait for jquery to be ready
 document.getElementById("join-game-submit").addEventListener("click", function (event) {

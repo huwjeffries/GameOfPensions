@@ -69,3 +69,17 @@ body {
   white-space: nowrap;
   line-height: 60px; /* Vertically center the text there */
 }
+
+/*----------------Custom Styles------------------*/
+.answer {
+    display: block;
+    font-size: 2em;
+    background-color: #8B4513;
+    color: #FFE97F;
+    margin: 10px;
+}
+
+.confirmedAnswer
+{
+    border: 5px solid #88ff88;
+}

@@ -14,8 +14,10 @@ namespace ParmenionGame
         Task Countdown(int timeRemaining);
         Task ShowDashboardQuestionText(string question);
         Task ShowPlayerQuestionAnswers(string[] answers);
+        Task ShowPlayerAnswerAccepted(int answerIndex);
         Task ShowDashboardPlayerList(string[] playerNames);
         Task ShowGameFinished(string message);
         Task Disconnect();
+        
     }
 }
