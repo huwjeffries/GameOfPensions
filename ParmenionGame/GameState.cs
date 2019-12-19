@@ -109,7 +109,11 @@ namespace ParmenionGame
             {
                 //TODO - Send Game Finished! Score table, etc.
                 int breakpoint = 1;
-                hubContext.Clients.AllExcept(dashboardConnectionId).ShowPlayerNewGameStarted();
+                await hubContext.Clients.AllExcept(dashboardConnectionId).ShowPlayerNewGameStarted();
+                foreach (var player in gamePlayers)
+                {
+                    await hubContext.Clients.Client(player.ConnectionId).Disconnect();
+                }
             } else
             {
                 //Send the question text to the dashboard and the answers to the mobile clients 

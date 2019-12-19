@@ -2,6 +2,7 @@
 
 //Todo - do we want withAutomaticReconnect? The player will pickup a new connectionId, so will look like a new player registering.
 var connection = new signalR.HubConnectionBuilder().withUrl("/gameHub").withAutomaticReconnect().build();
+connection.serverTimeoutInMilliseconds = 120000; // 2 minutes
 
 function errorReport(err) {
     return console.error(err.toString());
@@ -31,6 +32,11 @@ connection.on("ShowPlayerNewGameStarted", function (message) {
 connection.on("Countdown", function (message) {
     $("#countdown").html(message);
 });
+
+connection.On("Disconnect", function () {
+    connection.stop();
+    setTimeout(function () { window.reload() }, 30);
+})
 
 // Wait for jquery to be ready
 document.getElementById("join-game-submit").addEventListener("click", function (event) {

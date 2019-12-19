@@ -14,5 +14,6 @@ namespace ParmenionGame
         Task ShowDashboardQuestionText(string question);
         Task ShowPlayerQuestionAnswers(string[] answers);
         Task ShowDashboardPlayerList(string[] playerNames);
+        Task Disconnect();
     }
 }
