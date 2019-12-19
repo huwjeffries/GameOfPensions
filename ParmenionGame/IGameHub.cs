@@ -9,6 +9,7 @@ namespace ParmenionGame
     {
         Task ShowDashboardJoinGameCode(string code);
         Task ShowPlayerIncorrectGameCode();
+        Task ShowPlayerAcceptedGameCode();
         Task ShowPlayerGameInProgress();
         Task ShowPlayerNewGameReady();
         Task Countdown(int timeRemaining);

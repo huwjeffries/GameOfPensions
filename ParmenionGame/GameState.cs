@@ -67,6 +67,7 @@ namespace ParmenionGame
                 {
                     gamePlayers.Add(new Player(name, playerConnectionId)); //TOOD - sanitise the name input.
                     await hubContext.Clients.Client(dashboardConnectionId).ShowDashboardPlayerList(gamePlayers.Select(p => p.Name).ToArray());
+                    await hubContext.Clients.Client(playerConnectionId).ShowPlayerAcceptedGameCode();
                 } else
                 {
                     await hubContext.Clients.Client(playerConnectionId).ShowPlayerIncorrectGameCode();

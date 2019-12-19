@@ -23,9 +23,16 @@ connection.on("ShowPlayerIncorrectGameCode", function (message) {
     $("#incorrect-game-code").show();
 });
 
+connection.on("ShowPlayerAcceptedGameCode", function (message) {
+    $("#incorrect-game-code").hide();
+    $("#join-game-view").hide();
+    $("#join-game-success").show();
+});
+
 connection.on("ShowPlayerGameInProgress", function (message) {
     $("#waiting-next-game-view").show();
     $("#join-game-view").hide();
+    $("#incorrect-game-code").hide();
 });
 
 connection.on("ShowPlayerNewGameReady", function (message) {
@@ -35,6 +42,7 @@ connection.on("ShowPlayerNewGameReady", function (message) {
 
 connection.on("ShowPlayerQuestionAnswers", function (answers) {
     $("#join-game-view").hide();
+    $("#join-game-success").hide();
     $("#answers-view").html("");
     $("#answers-view").show();
     var view = $("#answers-view");
