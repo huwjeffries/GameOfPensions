@@ -140,9 +140,10 @@ namespace ParmenionGame
             }
             else
             {
-                //Send the question text to the dashboard and the answers to the mobile clients 
+                //Send the question text to the dashboard and the answers to the mobile clients
+                var allPlayers = gamePlayers.Select(p => p.ConnectionId).ToList();
                 await hubContext.Clients.Client(dashboardConnectionId).ShowDashboardQuestionText(questions[questionNumber].QuestionText);
-                await hubContext.Clients.AllExcept(dashboardConnectionId).ShowPlayerQuestionAnswers(questions[questionNumber].Answers);
+                await hubContext.Clients.Clients(allPlayers).ShowPlayerQuestionAnswers(questions[questionNumber].Answers);
                 questionNumber++;
 
                 countdown = new Countdown(5, BroadcastCountdownProgress, NextQuestion);
