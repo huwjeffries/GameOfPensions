@@ -23,11 +23,16 @@ connection.on("ShowPlayerIncorrectGameCode", function (message) {
     $("#incorrect-game-code").show();
 });
 
-connection.on("ShowPlayerNewGameStarted", function (message) {
+connection.on("ShowPlayerGameInProgress", function (message) {
+    $("#waiting-next-game-view").show();
+    $("#join-game-view").hide();
+});
+
+
+connection.on("ShowPlayerNewGameReady", function (message) {
     $("#waiting-next-game-view").hide();
     $("#join-game-view").show();
 });
-
 
 connection.on("Countdown", function (message) {
     $("#countdown").html(message);

@@ -90,15 +90,23 @@ namespace ParmenionGame
             gameCode = "def";  //TODO - generate random letters lowercase
             isGameInProgres = false;
             logger.LogDebug($"Created game with code '{gameCode}'");
-            
+
             //Show the game code and start the countdown
             await hubContext.Clients.Client(dashboardConnectionId).ShowDashboardJoinGameCode(gameCode);
-            countdown = new Countdown(20, BroadcastCountdownProgress, NextQuestion);
+            await hubContext.Clients.AllExcept(dashboardConnectionId).ShowPlayerNewGameReady();
+            countdown = new Countdown(20, BroadcastCountdownProgress, BeginRounds);
         }
 
         private async Task BroadcastCountdownProgress(int timeRemaining)
         {
             await hubContext.Clients.All.Countdown(timeRemaining);
+        }
+
+        public async Task BeginRounds()
+        {
+            var allGameConnections = gamePlayers.Select(p => p.ConnectionId).ToList().Concat(new[] { dashboardConnectionId });
+            await hubContext.Clients.AllExcept(allGameConnections.ToList()).ShowPlayerGameInProgress();
+            await NextQuestion();
         }
 
         public async Task NextQuestion()
@@ -107,15 +115,7 @@ namespace ParmenionGame
 
             if (questionNumber == questions.Length)
             {
-                //TODO - Send Game Finished! Score table, etc.
-                await hubContext.Clients.AllExcept(dashboardConnectionId).ShowPlayerNewGameStarted();
-                await hubContext.Clients.Client(dashboardConnectionId).ShowGameFinished("foo");
-                foreach (var player in gamePlayers)
-                {
-                    await hubContext.Clients.Client(player.ConnectionId).Disconnect();
-                }
-
-                countdown = new Countdown(10, BroadcastCountdownProgress, StartNewGame);
+                await EndGame();
             }
             else
             {
@@ -128,6 +128,16 @@ namespace ParmenionGame
             }
         }
 
-        
+        private async Task EndGame()
+        {
+            //TODO - Send Game Finished! Score table, etc.
+            await hubContext.Clients.Client(dashboardConnectionId).ShowGameFinished("foo");
+            foreach (var player in gamePlayers)
+            {
+                await hubContext.Clients.Client(player.ConnectionId).Disconnect();
+            }
+
+            countdown = new Countdown(10, BroadcastCountdownProgress, StartNewGame);
+        }
     }
 }
