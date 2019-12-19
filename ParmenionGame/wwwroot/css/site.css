@@ -45,32 +45,43 @@ html {
 .box-shadow {
   box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
 }
-
-button.accept-policy {
-  font-size: 1rem;
-  line-height: inherit;
-}
-
-/* Sticky footer styles
--------------------------------------------------- */
 html {
   position: relative;
   min-height: 100%;
 }
 
-body {
-  /* Margin bottom by footer height */
-  margin-bottom: 60px;
-}
-.footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  white-space: nowrap;
-  line-height: 60px; /* Vertically center the text there */
+/*----------------Custom Styles------------------*/
+
+#game-ready {
+    background-color: #750034;
+    height: 100%;
 }
 
-/*----------------Custom Styles------------------*/
+#game-progress {
+    background-color: #751137;
+    height: 100%;
+}
+
+#game-over {
+    background-color: #e62248;
+    height: 100%;
+}
+
+body {
+    font-family: "Libre Franklin", sans-serif;
+    height: 100vh;
+}
+
+#dashboard-view {
+    height: 100%;
+    font-size: 30pt;
+    color: white;
+}
+
+#container, main {
+    height:100%;
+}
+
 .answer {
     display: block;
     font-size: 2em;
@@ -82,4 +93,40 @@ body {
 .confirmedAnswer
 {
     border: 5px solid #88ff88;
+}
+
+#join-game-code {
+    font-size: 72pt;
+}
+
+#game-header {
+    height: 15vh;
+}
+
+#game-ready-1 {
+    height: 55vh;
+}
+
+#game-ready-2
+{
+    height: 30vh;
+}
+
+#logo {
+    font-family: 'Maiandra GD'
+}
+
+#logo .big {
+    font-size: 60pt;
+}
+
+#logo .mini {
+    font-size: 48pt;
+}
+
+#join-qr {
+    width: 200px;
+    position:absolute;
+    bottom:0px;
+    right: 25px;
 }
