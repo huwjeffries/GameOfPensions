@@ -8,7 +8,8 @@ function errorReport(err) {
 
 connection.on("ShowDashboardJoinGameCode", function (message) {
     $("#join-game-code").html(message);
-    $("#join-game-code").show();
+    $("#game-ready").show();
+    $("#game-over").hide();
 });
 
 connection.on("Countdown", function (message) {
@@ -16,13 +17,12 @@ connection.on("Countdown", function (message) {
 });
 
 connection.on("ShowDashboardQuestionText", function (message) {
-    $("#join-game-code").hide();
-    $("#question").show();
+    $("#game-progress").show();
+    $("#game-ready").hide();
     $("#question").html(message);
 });
 
 connection.on("ShowDashboardPlayerList", function (message) {
-    $("#player-list").show();
     $("#player-list").html(message);
 });
 
@@ -31,5 +31,6 @@ connection.start().then(function () {
 }).catch(errorReport);
 
 connection.on("ShowGameFinished", function (message) {
-    $("#game-finished-view").show();
+    $("#game-over").show();
+    $("#game-progress").hide();
 });
