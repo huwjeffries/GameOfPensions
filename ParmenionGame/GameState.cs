@@ -93,7 +93,7 @@ namespace ParmenionGame
             
             //Show the game code and start the countdown
             await hubContext.Clients.Client(dashboardConnectionId).ShowDashboardJoinGameCode(gameCode);
-            countdown = new Countdown(10, BroadcastCountdownProgress, NextQuestion);
+            countdown = new Countdown(20, BroadcastCountdownProgress, NextQuestion);
         }
 
         private async Task BroadcastCountdownProgress(int timeRemaining)
@@ -108,20 +108,23 @@ namespace ParmenionGame
             if (questionNumber == questions.Length)
             {
                 //TODO - Send Game Finished! Score table, etc.
-                int breakpoint = 1;
                 await hubContext.Clients.AllExcept(dashboardConnectionId).ShowPlayerNewGameStarted();
+                await hubContext.Clients.Client(dashboardConnectionId).ShowGameFinished("foo");
                 foreach (var player in gamePlayers)
                 {
                     await hubContext.Clients.Client(player.ConnectionId).Disconnect();
                 }
-            } else
+
+                countdown = new Countdown(10, BroadcastCountdownProgress, StartNewGame);
+            }
+            else
             {
                 //Send the question text to the dashboard and the answers to the mobile clients 
                 await hubContext.Clients.Client(dashboardConnectionId).ShowDashboardQuestionText(questions[questionNumber].QuestionText);
                 await hubContext.Clients.AllExcept(dashboardConnectionId).ShowPlayerQuestionAnswers(questions[questionNumber].Answers);
                 questionNumber++;
 
-                countdown = new Countdown(10, BroadcastCountdownProgress, NextQuestion);
+                countdown = new Countdown(5, BroadcastCountdownProgress, NextQuestion);
             }
         }
 

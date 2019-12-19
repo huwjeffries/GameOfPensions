@@ -33,9 +33,9 @@ connection.on("Countdown", function (message) {
     $("#countdown").html(message);
 });
 
-connection.On("Disconnect", function () {
+connection.on("Disconnect", function () {
     connection.stop();
-    setTimeout(function () { window.reload() }, 30);
+    setTimeout(function () { window.location.reload() }, 30);
 })
 
 // Wait for jquery to be ready
