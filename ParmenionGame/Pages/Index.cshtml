@@ -8,11 +8,19 @@
     <span>Establishing connection...</span>
 </div>
 
-<div class="text-center" id="join-game-frame" style="display:none">
+<div>
+    Time: <div id="countdown"></div>
+</div>
+
+<div class="text-center" id="waiting-next-game-view" style="display:none">
+    Please wait for the next game to begin
+</div>
+
+<div class="text-center" id="join-game-view" style="display:none">
     <form>
         <div>
-            <label for="gamecode">Code</label>
-            <input required="required" id="gamecode" />
+            <label for="gamecode">Enter 3 letter game code:</label>
+            <input required="required" id="gamecode" pattern="[A-Za-z]{3}" />
         </div>
 
         <div>
@@ -21,8 +29,8 @@
         </div>
     </form>
     <input id="join-game-submit" type="submit" />
+    <div id="incorrect-game-code" style="display: none" class="alert alert-warning">Invalid game code!</div>
 </div>
-<div id="incorrect-game-code" style="display: none">You have entered an incorrect game code!</div>
 
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
-<script src="~/js/game.js"></script>
+<script src="~/js/player.js"></script>

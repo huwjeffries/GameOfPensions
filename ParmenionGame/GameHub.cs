@@ -20,6 +20,11 @@ namespace ParmenionGame
             await this.state.RegisterDashboard(this.Context.ConnectionId);
         }
 
+        public bool IsGameInProgress()
+        {
+            return state.IsGameInProgress();
+        }
+
         public async Task RegisterPlayer(string code, string name)
         {
             await this.state.RegisterPlayer(code, name, this.Context.ConnectionId);

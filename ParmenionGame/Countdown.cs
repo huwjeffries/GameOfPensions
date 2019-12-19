@@ -11,7 +11,7 @@ namespace ParmenionGame
         private int countdownTime;
         private readonly Func<int, Task> countdownProgressAction;
         private readonly Func<Task> countdownFinishedAction;
-        private readonly Timer timer;
+        private Timer timer;
 
         public Countdown(int totalTime, Func<int, Task> countdownProgressAction, Func<Task> countdownFinishedAction)
         {
@@ -26,10 +26,20 @@ namespace ParmenionGame
             countdownTime--;
             if (countdownTime <= 0)
             {
-                timer.Change(Timeout.Infinite, 0);
+                StopTimer();
                 await countdownFinishedAction();
             }
             await countdownProgressAction(countdownTime);
+        }
+
+        internal void StopTimer()
+        {
+            if (timer != null)
+            {
+                timer.Change(Timeout.Infinite, 0);
+                timer.Dispose();
+                timer = null;
+            }
         }
     }
 }
