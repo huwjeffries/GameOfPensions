@@ -25,10 +25,7 @@ namespace ParmenionGame
 
         private Action<int> countdownProgressAction = null;
         private Action<Question> nextQuestionAction = null;
-
         private readonly ILogger<GameState> logger;
-        private Timer _timer;
-        private int countdownTime = 0;
 
         private Dictionary<string, List<Player>> GamePlayers;
         private Dictionary<string, string> Dashboards;
@@ -40,13 +37,13 @@ namespace ParmenionGame
             this.Dashboards = new Dictionary<string, string>();
         }
 
-        public void JoinGame(string code, string name, string connectionId, Action<string, IEnumerable<string>> updateDashboardAction)
+        public void JoinGame(string code, string name, string connectionId, Action<string, string[]> updateDashboardAction)
         {
             logger.LogDebug($"'{name}' joined game '{code}'");
             if (this.GamePlayers.ContainsKey(code))
             {
                 this.GamePlayers[code].Add(new Player(name, connectionId));
-                updateDashboardAction(this.Dashboards[code], this.GamePlayers[code].Select(p => p.Name));
+                updateDashboardAction(this.Dashboards[code], this.GamePlayers[code].Select(p => p.Name).ToArray());
             }
             else
             {
@@ -54,7 +51,7 @@ namespace ParmenionGame
             }
         }
 
-        public void JoinGameCountdown(string code, string connectionId, Action<int> countdownProgressAction, Action<Question> nextQuestionAction)
+        public void RegisterDashboard(string code, string connectionId, Action<int> countdownProgressAction, Action<Question> nextQuestionAction)
         {
             questionNumber = 0;
             this.countdownProgressAction = countdownProgressAction;

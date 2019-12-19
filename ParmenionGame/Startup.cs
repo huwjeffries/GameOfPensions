@@ -23,7 +23,7 @@ namespace ParmenionGame
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
-            services.AddHostedService<GameService>();
+            //services.AddHostedService<GameService>();
             services.AddSignalR();
             services
                 .AddSingleton<GameHub>()
