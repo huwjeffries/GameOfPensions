@@ -11,10 +11,14 @@ connection.start().then(function () {
     $("#join-game-frame").show();
 }).catch(errorReport);
 
+connection.on("ShowIncorrectGameCode", function (message) {    
+    $("#incorrect-game-code").show();
+});
+
 // Wait for jquery to be ready
 document.getElementById("join-game-submit").addEventListener("click", function (event) {
     var code = $("#gamecode").val();
     var name = $("#name").val();
-    connection.invoke("JoinGame", code, name).catch(errorReport);
+    connection.invoke("RegisterPlayer", code, name).catch(errorReport);
     event.preventDefault();
 });

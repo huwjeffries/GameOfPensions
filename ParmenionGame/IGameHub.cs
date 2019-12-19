@@ -8,8 +8,10 @@ namespace ParmenionGame
     public interface IGameHub
     {
         Task JoinGameCode(string code);
-        Task JoinGameCountdown(int timeRemaining);
-        Task ShowQuestion(string question);
+        Task ShowIncorrectGameCode();
+        Task Countdown(int timeRemaining);
+        Task ShowQuestionText(string question);
+        Task ShowQuestionAnswers(string[] answers);
         Task UpdatePlayerList(string[] playerNames);
     }
 }

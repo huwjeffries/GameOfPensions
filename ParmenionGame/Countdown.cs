@@ -9,11 +9,11 @@ namespace ParmenionGame
     public class Countdown
     {
         private int countdownTime;
-        private readonly Action<int> countdownProgressAction;
-        private readonly Action countdownFinishedAction;
+        private readonly Func<int, Task> countdownProgressAction;
+        private readonly Func<Task> countdownFinishedAction;
         private readonly Timer timer;
 
-        public Countdown(int totalTime, Action<int> countdownProgressAction, Action countdownFinishedAction)
+        public Countdown(int totalTime, Func<int, Task> countdownProgressAction, Func<Task> countdownFinishedAction)
         {
             this.countdownTime = totalTime;
             this.countdownProgressAction = countdownProgressAction;
@@ -21,15 +21,15 @@ namespace ParmenionGame
             this.timer = new Timer(DoCountdown, null, TimeSpan.Zero, TimeSpan.FromSeconds(1));
         }    
 
-        private void DoCountdown(object? state)
+        private async void DoCountdown(object state)
         {
             countdownTime--;
             if (countdownTime <= 0)
             {
                 timer.Change(Timeout.Infinite, 0);
-                countdownFinishedAction();
+                await countdownFinishedAction();
             }
-            countdownProgressAction(countdownTime);
+            await countdownProgressAction(countdownTime);
         }
     }
 }

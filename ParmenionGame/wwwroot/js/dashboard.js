@@ -10,11 +10,11 @@ connection.on("JoinGameCode", function (message) {
     document.getElementById("join-game-code").innerHTML = message;
 });
 
-connection.on("JoinGameCountdown", function (message) {
+connection.on("Countdown", function (message) {
     document.getElementById("join-game-countdown").innerHTML = message;
 });
 
-connection.on("ShowQuestion", function (message) {
+connection.on("ShowQuestionText", function (message) {
     document.getElementById("join-game-code").hidden = true;
     document.getElementById("question").innerHTML = message;
 });

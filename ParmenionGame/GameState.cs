@@ -1,8 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace ParmenionGame
 {
@@ -23,59 +25,82 @@ namespace ParmenionGame
             }
         };
 
-        private Action<int> countdownProgressAction = null;
-        private Action<Question> nextQuestionAction = null;
         private readonly ILogger<GameState> logger;
+        private readonly IHubContext<GameHub, IGameHub> hubContext;        
+        private List<Player> gamePlayers = new List<Player>();
+        private string dashboardConnectionId;
+        private string gameCode;
 
-        private Dictionary<string, List<Player>> GamePlayers;
-        private Dictionary<string, string> Dashboards;
-
-        public GameState(ILogger<GameState> logger)
+        public GameState(ILogger<GameState> logger, IHubContext<GameHub, IGameHub> hubContext)
         {
             this.logger = logger;
-            this.GamePlayers = new Dictionary<string, List<Player>>();
-            this.Dashboards = new Dictionary<string, string>();
+            this.hubContext = hubContext;
         }
 
-        public void JoinGame(string code, string name, string connectionId, Action<string, string[]> updateDashboardAction)
+        /// <summary>
+        /// Grab the connection ID of the dashboard and reset the game state.
+        /// </summary>
+        public async Task RegisterDashboard(string dashboardConnectionId)
+        {
+            this.dashboardConnectionId = dashboardConnectionId; //TODO - do we need to disconnect existing dashboard?
+            await StartNewGame();
+        }
+
+        /// <summary>
+        /// Register a new player
+        /// </summary>
+        public async Task RegisterPlayer(string code, string name, string playerConnectionId) //, Action<string, string[]> updateDashboardAction)
         {
             logger.LogDebug($"'{name}' joined game '{code}'");
-            if (this.GamePlayers.ContainsKey(code))
+            //Check the player isn't already registered.
+            if (!gamePlayers.Any(p => p.ConnectionId == playerConnectionId))
             {
-                this.GamePlayers[code].Add(new Player(name, connectionId));
-                updateDashboardAction(this.Dashboards[code], this.GamePlayers[code].Select(p => p.Name).ToArray());
-            }
-            else
-            {
-                // Handle error for unmatched code
+                if(code == gameCode)
+                {
+                    gamePlayers.Add(new Player(name, playerConnectionId)); //TOOD - sanitise the name input.
+                    await hubContext.Clients.Client(dashboardConnectionId).UpdatePlayerList(gamePlayers.Select(p => p.Name).ToArray());
+                } else
+                {
+                    await hubContext.Clients.Client(playerConnectionId).ShowIncorrectGameCode();
+                }
             }
         }
 
-        public void RegisterDashboard(string code, string connectionId, Action<int> countdownProgressAction, Action<Question> nextQuestionAction)
+
+        /// <summary>
+        /// Reset the game state.
+        /// </summary>
+        private async Task StartNewGame()
         {
+            gamePlayers.Clear();  //TODO - do we need to disconnect existing players?
             questionNumber = 0;
-            this.countdownProgressAction = countdownProgressAction;
-            this.nextQuestionAction = nextQuestionAction;
-            var countdown = new Countdown(10, countdownProgressAction, NextQuestion);
-
-            if (!GamePlayers.ContainsKey(code))
-            {
-                this.GamePlayers.Add(code, new List<Player>());
-                this.Dashboards.Add(code, connectionId);
-                logger.LogDebug($"Created game with code '{code}'");
-            }
+            gameCode = "DEF";  //TODO - generate random letters
+            logger.LogDebug($"Created game with code '{gameCode}'");
+            
+            //Show the game code and start the countdown
+            await hubContext.Clients.Client(dashboardConnectionId).JoinGameCode(gameCode);
+            new Countdown(10, BroadcastCountdownProgress, NextQuestion);
         }
 
-        public void NextQuestion()
+        private async Task BroadcastCountdownProgress(int timeRemaining)
+        {
+            await hubContext.Clients.Client(dashboardConnectionId).Countdown(timeRemaining);
+        }
+
+        public async Task NextQuestion()
         {
             if(questionNumber == questions.Length)
             {
-                //Game finished#
+                //TODO - Send Game Finished! Score table, etc.
                 int breakpoint = 1;
             } else
             {
-                nextQuestionAction(questions[questionNumber++]);
-                var countdown = new Countdown(10, countdownProgressAction, NextQuestion);
+                //Send the question text to the dashboard and the answers to the mobile clients 
+                await hubContext.Clients.Client(dashboardConnectionId).ShowQuestionText(questions[questionNumber].QuestionText);
+                await hubContext.Clients.AllExcept(dashboardConnectionId).ShowQuestionAnswers(questions[questionNumber].Answers);
+                questionNumber++;
+                
+                new Countdown(10, BroadcastCountdownProgress, NextQuestion);
             }
         }
 

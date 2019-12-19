@@ -16,17 +16,13 @@ namespace ParmenionGame
         }
 
         public async Task RegisterDashboard()
-        {
-            await Clients.Caller.JoinGameCode("DEF");
-            this.state.RegisterDashboard("DEF",
-                this.Context.ConnectionId,
-                (int timeRemaining) => Clients.Caller.JoinGameCountdown(timeRemaining), //And question countdown. Rename to dashboard countdown?
-                (Question question) => Clients.Caller.ShowQuestion(question.QuestionText));
+        {            
+            await this.state.RegisterDashboard(this.Context.ConnectionId);
         }
 
-        public async Task JoinGame(string code, string name)
+        public async Task RegisterPlayer(string code, string name)
         {
-            this.state.JoinGame(code, name, this.Context.ConnectionId, (string dashboardId, string[] playerNames) => Clients.Client(dashboardId).UpdatePlayerList(playerNames));
+            await this.state.RegisterPlayer(code, name, this.Context.ConnectionId);
         }
     }
 }
