@@ -4,42 +4,57 @@
     ViewData["Title"] = "Home page";
 }
 
-<div class="text-center" id="loading">
-    <span>Establishing connection...</span>
-</div>
+<div id="client-view">
+    <div id="logo" class="text-center"><span class="big">GAME</span> <span class="mini">OF</span> <span class="big">PENSIONS</span></div>
+    <div class="text-center" id="loading">
+        <span>Establishing connection...</span>
+    </div>
 
-<div>
-    Time: <div id="countdown"></div>
-</div>
+    <div class="row ml-0 mr-0">
+        <div class="col-sm-1"></div>
+        <div class="col-sm-3" id="countdown"></div>
+        <div class="col-sm-4"></div>
+        <div class="col-sm-3" id="balance"></div>
+        <div class="col-sm-1"></div>
+    </div>
 
-<div class="text-center" id="waiting-next-game-view" style="display:none">
-    <span>Please wait for the next game to begin</span>
 
-    <span><a href="https://www.parmenioncareers.co.uk/jobs.asp">Check out our vacancies</a></span>
-</div>
+    <div class="text-center" id="waiting-next-game-view" style="display:none">
+        <div>Please wait for the next game to begin</div>
 
-<div class="text-center" id="join-game-view" style="display:none">
-    <form>
-        <div>
-            <label for="gamecode">Enter 3 letter game code:</label>
-            <input required="required" id="gamecode" style="text-transform:uppercase" pattern="[A-Za-z]{3}" />
+        <div><a href="https://www.parmenioncareers.co.uk/jobs.asp">Check our vacancies</a></div>
+    </div>
+
+    <div class="text-center" id="join-game-view" style="display:none">
+        <div id="incorrect-game-code" style="display: none" class="alert alert-warning text-center">Invalid game code!</div>
+        <div class="row ml-0 mr-0">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-10">
+                <form>
+                    <div class="form-group">
+                        <label class="control-label" for="gamecode">Game Code:</label>
+                        <input class="form-control" type="text" required="required" id="gamecode" style="text-transform:uppercase" pattern="[A-Za-z]{3}" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label" for="name">Name:</label>
+                        <input class="form-control" type="text" required="required" style="text-transform:uppercase" id="name" />
+                    </div>
+                    <input id="join-game-submit" class="btn btn-primary" type="submit" />
+                </form>
+            </div>
+            <div class="col-sm-1"></div>
         </div>
+    </div>
 
-        <div>
-            <label for="name">Name</label>
-            <input required="required" style="text-transform:uppercase" id="name" />
-        </div>
-    </form>
-    <input id="join-game-submit" type="submit" />
-    <div id="incorrect-game-code" style="display: none" class="alert alert-warning text-center">Invalid game code!</div>
+    <div id="join-game-success" class="alert alert-success" role="alert" style="display:none">
+        Code accepted. The game will begin soon.
+    </div>
+
+    <div class="text-center" id="answers-view" style="display:none">
+    </div>
 </div>
 
-<div id="join-game-success" class="alert alert-success" role="alert" style="display:none">
-    Code accepted. The game will begin soon.
-</div>
-
-<div class="text-center" id="answers-view" style="display:none">
-</div>
 
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
 <script src="~/js/player.js"></script>

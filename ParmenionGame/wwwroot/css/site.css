@@ -78,6 +78,13 @@ body {
     color: white;
 }
 
+#client-view {
+    height: 100%;
+    font-size: 18pt;
+    background-color: #750034;
+    color: white;
+}
+
 #container, main {
     height:100%;
 }
@@ -117,11 +124,11 @@ body {
 }
 
 #logo .big {
-    font-size: 60pt;
+    font-size: 2em;
 }
 
 #logo .mini {
-    font-size: 48pt;
+    font-size: 1.5em;
 }
 
 #join-qr {

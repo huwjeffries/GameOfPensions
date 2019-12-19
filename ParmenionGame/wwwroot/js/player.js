@@ -33,11 +33,13 @@ connection.on("ShowPlayerGameInProgress", function (message) {
     $("#waiting-next-game-view").show();
     $("#join-game-view").hide();
     $("#incorrect-game-code").hide();
+    $("#countdown").hide();
 });
 
 connection.on("ShowPlayerNewGameReady", function (message) {
     $("#waiting-next-game-view").hide();
     $("#join-game-view").show();
+    $("#countdown").show();
 });
 
 connection.on("ShowPlayerQuestionAnswers", function (answers) {
@@ -68,7 +70,16 @@ connection.on("ShowPlayerAnswerAccepted", function (answerIndex) {
 });
 
 connection.on("Countdown", function (message) {
-    $("#countdown").html(message);
+    var seconds = message % 60;
+    var minutes = (message - seconds) / 60;
+    var countdownTime;
+    if (minutes > 0) {
+        countdownTime = minutes + "m " + seconds + "s";
+    }
+    else {
+        countdownTime = seconds + "s";
+    }
+    $("#countdown").html(countdownTime);
 });
 
 connection.on("Disconnect", function () {
@@ -79,7 +90,7 @@ connection.on("Disconnect", function () {
 // Wait for jquery to be ready
 document.getElementById("join-game-submit").addEventListener("click", function (event) {
     var code = $("#gamecode").val();
-    var name = $("#name").val();
+    var name = $("#name").val().toUpperCase();
     $("#incorrect-game-code").hide();
     connection.invoke("RegisterPlayer", code, name).catch(errorReport);
     event.preventDefault();
