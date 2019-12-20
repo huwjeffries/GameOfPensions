@@ -36,7 +36,7 @@ connection.on("ShowDashboardQuestionText", function (question, prompt, age) {
 });
 
 connection.on("ShowDashboardPlayerList", function (message) {
-    $(".player-list").html(message);
+    $(".player-list").html(message.join("<br/>"));
 });
 
 connection.start().then(function () {

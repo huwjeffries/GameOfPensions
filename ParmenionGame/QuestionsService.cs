@@ -67,7 +67,7 @@ namespace ParmenionGame
             },
             new Question()
             {
-                QuestionText = "You receive an inhertance of £100K. What do you want to do with it?",
+                QuestionText = "You receive an inheritance of £100K. What do you want to do with it?",
                 Prompt = "Parmenion offers preferential rates to staff investing in Parmenion ISAs / Pensions",
                 Answers = new []{
                     new Answer("Keep it in the bank", p => p.Savings += 100000m),

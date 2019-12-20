@@ -39,7 +39,10 @@ connection.on("ShowPlayerGameInProgress", function (message) {
 connection.on("ShowPlayerNewGameReady", function (message) {
     $("#waiting-next-game-view").hide();
     $("#join-game-view").show();
+    $("#incorrect-game-code").hide();
     $("#countdown").show();
+    $("#answers-view").hide();
+    $("#balance").html("");
 });
 
 connection.on("ShowPlayerQuestionAnswers", function (answers, savings, pensionPot, property) {
