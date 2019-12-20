@@ -13,7 +13,7 @@ namespace ParmenionGame
         Task ShowPlayerGameInProgress();
         Task ShowPlayerNewGameReady();
         Task Countdown(int timeRemaining);
-        Task ShowDashboardQuestionText(string question, string prompt);
+        Task ShowDashboardQuestionText(string question, string prompt, int playerAge);
         Task ShowPlayerQuestionAnswers(string[] answers, int savings, int pensionPot, int property);
         Task ShowPlayerAnswerAccepted(int answerIndex);
         Task ShowDashboardPlayerList(string[] playerNames);

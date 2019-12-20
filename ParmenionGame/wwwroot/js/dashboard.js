@@ -27,11 +27,12 @@ connection.on("Countdown", function (message) {
     $(".countdown").html(countdownTime);
 });
 
-connection.on("ShowDashboardQuestionText", function (question, prompt) {
+connection.on("ShowDashboardQuestionText", function (question, prompt, age) {
     $("#game-progress").show();
     $("#game-ready").hide();
     $("#question").html(question);
     $("#prompt").html(prompt);
+    $("#player-age").html(age);
 });
 
 connection.on("ShowDashboardPlayerList", function (message) {

@@ -159,7 +159,7 @@ namespace ParmenionGame
             else
             {                
                 //Send the question text to the dashboard and the answers to the mobile clients
-                await hubContext.Clients.Client(dashboardConnectionId).ShowDashboardQuestionText(question.QuestionText, question.Prompt);
+                await hubContext.Clients.Client(dashboardConnectionId).ShowDashboardQuestionText(question.QuestionText, question.Prompt, question.Age);
 
                 var numberOfYears = questionNumber > 0 ? question.Age - questionsService.GetQuestion(questionNumber - 1).Age : 0;
 
