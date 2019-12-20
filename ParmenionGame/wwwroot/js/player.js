@@ -42,12 +42,14 @@ connection.on("ShowPlayerNewGameReady", function (message) {
     $("#countdown").show();
 });
 
-connection.on("ShowPlayerQuestionAnswers", function (answers) {
+connection.on("ShowPlayerQuestionAnswers", function (answers, savings, pensionPot, property) {
     $("#join-game-view").hide();
     $("#join-game-success").hide();
     $("#answers-view").html("");
     $("#answers-view").show();
     var view = $("#answers-view");
+
+    $("#balance").html("<div>Savings: £" + savings + "</div><div>Pension: £" + pensionPot + "</div><div>Property: £" + property + "</div>");
 
     answers.forEach((answer, i) => {
         var hyperLink = $('<a/>', {

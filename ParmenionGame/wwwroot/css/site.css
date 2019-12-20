@@ -137,3 +137,7 @@ body {
     bottom:0px;
     right: 25px;
 }
+
+#balance {
+    font-size: 0.7em;
+}

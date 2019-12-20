@@ -27,7 +27,8 @@ namespace ParmenionGame
             services.AddSignalR();
             services
                 .AddSingleton<GameHub>()
-                .AddSingleton<GameState>();
+                .AddSingleton<GameState>()
+                .AddSingleton<QuestionsService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

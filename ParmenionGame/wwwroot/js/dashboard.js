@@ -27,10 +27,10 @@ connection.on("Countdown", function (message) {
     $(".countdown").html(countdownTime);
 });
 
-connection.on("ShowDashboardQuestionText", function (message) {
+connection.on("ShowDashboardQuestionText", function (question, prompt) {
     $("#game-progress").show();
     $("#game-ready").hide();
-    $("#question").html(message);
+    $("#question").html(question);
 });
 
 connection.on("ShowDashboardPlayerList", function (message) {
@@ -41,7 +41,14 @@ connection.start().then(function () {
     connection.invoke("RegisterDashboard");
 }).catch(errorReport);
 
-connection.on("ShowGameFinished", function (message) {
+connection.on("ShowGameFinished", function (players) {
     $("#game-over").show();
     $("#game-progress").hide();
+
+    players = JSON.parse(players);
+
+    players.forEach((player) => {
+        $("#player-results").append("<tr><td>" + player.Name + "</td><td>£" + Math.round(player.Savings) + "</td><td>£" + Math.round(player.Property) + "</td><td>£" + Math.round(player.PensionPot) + "</td><th>£" + Math.round(player.NetWorth) + "</th></tr>");
+    });
+
 });

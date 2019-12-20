@@ -14,7 +14,7 @@ namespace ParmenionGame
         Task ShowPlayerNewGameReady();
         Task Countdown(int timeRemaining);
         Task ShowDashboardQuestionText(string question);
-        Task ShowPlayerQuestionAnswers(string[] answers);
+        Task ShowPlayerQuestionAnswers(string[] answers, int savings, int pensionPot, int property);
         Task ShowPlayerAnswerAccepted(int answerIndex);
         Task ShowDashboardPlayerList(string[] playerNames);
         Task ShowGameFinished(string message);

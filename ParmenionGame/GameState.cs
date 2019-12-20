@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,32 +13,25 @@ namespace ParmenionGame
     public class GameState
     {
         private int questionNumber = 0;
-        private Question[] questions =
-        {
-            new Question()
-            {
-                QuestionText = "What do you get if you multiply 6 by 7?",
-                Answers = new string[]{ "42", "35", "56"}
-            },
-            new Question()
-            {
-                QuestionText = "What is the Queen's favourite animal?",
-                Answers = new string[]{ "Corgi", "Monkey", "Spider", "Horse" }
-            }
-        };
+
+        private const int TimeBeforeGame = 17;
+        private const int TimePerRound = 1;
+        private const int TimeAfterGame = 600;
 
         private readonly ILogger<GameState> logger;
-        private readonly IHubContext<GameHub, IGameHub> hubContext;        
+        private readonly IHubContext<GameHub, IGameHub> hubContext;
+        private readonly QuestionsService questionsService;
         private List<Player> gamePlayers = new List<Player>();
         private string dashboardConnectionId;
         private string gameCode;
         private Countdown countdown = null;
         private bool isGameInProgres = false;
 
-        public GameState(ILogger<GameState> logger, IHubContext<GameHub, IGameHub> hubContext)
+        public GameState(ILogger<GameState> logger, IHubContext<GameHub, IGameHub> hubContext, QuestionsService questionsService)
         {
             this.logger = logger;
-            this.hubContext = hubContext;            
+            this.hubContext = hubContext;
+            this.questionsService = questionsService;
         }
 
         /// <summary>
@@ -45,7 +39,7 @@ namespace ParmenionGame
         /// </summary>
         public async Task RegisterDashboard(string dashboardConnectionId)
         {
-            this.dashboardConnectionId = dashboardConnectionId; //TODO - do we need to disconnect existing dashboard?
+            this.dashboardConnectionId = dashboardConnectionId;
             await StartNewGame();
         }
 
@@ -76,10 +70,10 @@ namespace ParmenionGame
         }
 
         public async Task PlayerAnswer(int answerIndex, string playerConnectionId)
-        {
-            //TODO - record the answer against the player for this round. Remember they might change their mind!
-            //We also have a possible race condition if the round has moved on while the message was in flight.
+        {            
+            //TODO - We also have a possible race condition if the round has moved on while the message was in flight.
             await hubContext.Clients.Client(playerConnectionId).ShowPlayerAnswerAccepted(answerIndex);
+            gamePlayers.Single(p => p.ConnectionId == playerConnectionId).SelectedAnswer = answerIndex;
         }
 
 
@@ -103,7 +97,7 @@ namespace ParmenionGame
             //Show the game code and start the countdown
             await hubContext.Clients.Client(dashboardConnectionId).ShowDashboardJoinGameCode(gameCode);
             await hubContext.Clients.AllExcept(dashboardConnectionId).ShowPlayerNewGameReady();
-            countdown = new Countdown(15, BroadcastCountdownProgress, BeginRounds);
+            countdown = new Countdown(TimeBeforeGame, BroadcastCountdownProgress, BeginRounds);
         }
 
         private string GenerateRandomGameCode()
@@ -132,35 +126,78 @@ namespace ParmenionGame
 
         public async Task NextQuestion()
         {
+            if (isGameInProgres)
+            {
+                var currentQuestion = questionsService.GetQuestion(questionNumber);
+                var numberOfYears = questionNumber > 0 ? currentQuestion.Age - questionsService.GetQuestion(questionNumber - 1).Age : 0;
+
+                foreach (var player in gamePlayers)
+                {
+                    currentQuestion.Answers[player.SelectedAnswer].Effect(player);
+                    player.SelectedAnswer = 0;
+                    ApplyYears(player, numberOfYears);
+                }
+
+                questionNumber++;
+            }
+
             isGameInProgres = true; //Stop anyone else joining.
 
-            if (questionNumber == questions.Length)
+            var question = questionsService.GetQuestion(questionNumber);
+
+            if (question == null)
             {
+                foreach (var player in gamePlayers)
+                {
+                    var finalQuestion = questionsService.GetQuestion(questionNumber - 1);
+                    ApplyYears(player, 65 - finalQuestion.Age);
+                }
                 await EndGame();
             }
             else
-            {
+            {                
                 //Send the question text to the dashboard and the answers to the mobile clients
-                var allPlayers = gamePlayers.Select(p => p.ConnectionId).ToList();
-                await hubContext.Clients.Client(dashboardConnectionId).ShowDashboardQuestionText(questions[questionNumber].QuestionText);
-                await hubContext.Clients.Clients(allPlayers).ShowPlayerQuestionAnswers(questions[questionNumber].Answers);
-                questionNumber++;
+                await hubContext.Clients.Client(dashboardConnectionId).ShowDashboardQuestionText(question.QuestionText);
 
-                countdown = new Countdown(5, BroadcastCountdownProgress, NextQuestion);
+                foreach (var player in gamePlayers)
+                {
+                    await hubContext.Clients.Client(player.ConnectionId).ShowPlayerQuestionAnswers(
+                        question.Answers.Select(a => a.Text).ToArray(),
+                        (int)player.Savings,
+                        (int)player.PensionPot,
+                        (int)player.Property
+                        );
+                }
+
+                countdown = new Countdown(TimePerRound, BroadcastCountdownProgress, NextQuestion);
             }
         }
 
         private async Task EndGame()
         {
             //TODO - Send Game Finished! Score table, etc.
-            await hubContext.Clients.Client(dashboardConnectionId).ShowGameFinished("foo");
+            var playerResults = JsonConvert.SerializeObject(gamePlayers.OrderByDescending(p => p.NetWorth));
+            await hubContext.Clients.Client(dashboardConnectionId).ShowGameFinished(playerResults);
             foreach (var player in gamePlayers)
             {
                 // Sends a message requesting the players disconnect. We can't break the connection from server-side code.
                 await hubContext.Clients.Client(player.ConnectionId).Disconnect();
             }
 
-            countdown = new Countdown(10, BroadcastCountdownProgress, StartNewGame);
+            countdown = new Countdown(TimeAfterGame, BroadcastCountdownProgress, StartNewGame);
+        }
+
+        private void ApplyYears(Player p, int numberOfYears)
+        {
+            if (numberOfYears <= 0)
+            {
+                return;
+            }
+
+            p.Income *= (decimal)Math.Pow(1.03, numberOfYears);
+            p.PensionPot += p.Income * p.PensionContribution * numberOfYears;
+            p.Property *= (decimal)Math.Pow(1.01, numberOfYears);
+            p.Savings += p.Income * 0.03m * numberOfYears;
         }
     }
 }
