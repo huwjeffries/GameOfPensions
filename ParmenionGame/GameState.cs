@@ -15,7 +15,7 @@ namespace ParmenionGame
         private int questionNumber = 0;
 
         private const int TimeBeforeGame = 17;
-        private const int TimePerRound = 1;
+        private const int TimePerRound = 30;
         private const int TimeAfterGame = 600;
 
         private readonly ILogger<GameState> logger;
@@ -59,6 +59,7 @@ namespace ParmenionGame
             {
                 if(code.ToLower() == gameCode)
                 {
+                    name = name.Length > 20 ? name.Substring(0, 20)+"..." : name;
                     gamePlayers.Add(new Player(name, playerConnectionId)); //TOOD - sanitise the name input.
                     await hubContext.Clients.Client(dashboardConnectionId).ShowDashboardPlayerList(gamePlayers.Select(p => p.Name).ToArray());
                     await hubContext.Clients.Client(playerConnectionId).ShowPlayerAcceptedGameCode();
@@ -194,10 +195,11 @@ namespace ParmenionGame
                 return;
             }
 
-            p.Income *= (decimal)Math.Pow(1.03, numberOfYears);
-            p.PensionPot += p.Income * p.PensionContribution * numberOfYears;
-            p.Property *= (decimal)Math.Pow(1.01, numberOfYears);
-            p.Savings += p.Income * 0.03m * numberOfYears;
+            p.Income *= (decimal)Math.Pow(1.03, numberOfYears); //Income increases at 6% per year.
+            p.PensionPot *= (decimal)Math.Pow(1.04, numberOfYears); //Money in pensions grows at 4% per year
+            p.PensionPot += p.Income * p.PensionContribution * numberOfYears; //We pay in additional money to pension each year
+            p.Property *= (decimal)Math.Pow(1.01, numberOfYears); //property prices go up by 1% each year.
+            p.Savings += p.Income * 0.03m * numberOfYears; //Save 3% of salary each year.
         }
     }
 }
