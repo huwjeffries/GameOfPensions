@@ -15,7 +15,7 @@ namespace ParmenionGame
         private int questionNumber = 0;
 
         private const int TimeBeforeGame = 17;
-        private const int TimePerRound = 1;
+        private const int TimePerRound = 10;
         private const int TimeAfterGame = 600;
 
         private readonly ILogger<GameState> logger;
