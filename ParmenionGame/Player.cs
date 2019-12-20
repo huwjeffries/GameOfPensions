@@ -14,7 +14,7 @@
 
         public bool SelfEmployed { get; set; }
         public decimal Income { get; set; }
-        public decimal Savings { get; set; }
+        public decimal Savings { get; set; } = 1000m;
         public decimal PensionPot { get; set; } //7%
         public decimal PensionContribution { get; set; }
         public decimal Property { get; set; } //1%
