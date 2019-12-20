@@ -155,3 +155,9 @@ body {
     bottom: 0;
     font-size: 0.7em;
 }
+
+#player-age {
+    font-size: 2em;
+    width: 100%;
+    line-height: 1em;
+}
