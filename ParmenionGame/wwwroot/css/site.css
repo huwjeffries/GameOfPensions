@@ -110,6 +110,14 @@ body {
     height: 15vh;
 }
 
+#game-body {
+    height: 75vh;
+}
+
+#game-footer {
+    height: 10vh;
+}
+
 #game-ready-1 {
     height: 55vh;
 }
@@ -139,5 +147,11 @@ body {
 }
 
 #balance {
+    font-size: 0.7em;
+}
+
+#prompt {
+    position: absolute;
+    bottom: 0;
     font-size: 0.7em;
 }

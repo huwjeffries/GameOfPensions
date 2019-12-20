@@ -31,6 +31,7 @@ connection.on("ShowDashboardQuestionText", function (question, prompt) {
     $("#game-progress").show();
     $("#game-ready").hide();
     $("#question").html(question);
+    $("#prompt").html(prompt);
 });
 
 connection.on("ShowDashboardPlayerList", function (message) {

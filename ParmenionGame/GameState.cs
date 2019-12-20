@@ -130,13 +130,11 @@ namespace ParmenionGame
             if (isGameInProgres)
             {
                 var currentQuestion = questionsService.GetQuestion(questionNumber);
-                var numberOfYears = questionNumber > 0 ? currentQuestion.Age - questionsService.GetQuestion(questionNumber - 1).Age : 0;
 
                 foreach (var player in gamePlayers)
                 {
                     currentQuestion.Answers[player.SelectedAnswer].Effect(player);
                     player.SelectedAnswer = 0;
-                    ApplyYears(player, numberOfYears);
                 }
 
                 questionNumber++;
@@ -158,10 +156,14 @@ namespace ParmenionGame
             else
             {                
                 //Send the question text to the dashboard and the answers to the mobile clients
-                await hubContext.Clients.Client(dashboardConnectionId).ShowDashboardQuestionText(question.QuestionText);
+                await hubContext.Clients.Client(dashboardConnectionId).ShowDashboardQuestionText(question.QuestionText, question.Prompt);
+
+                var numberOfYears = questionNumber > 0 ? question.Age - questionsService.GetQuestion(questionNumber - 1).Age : 0;
 
                 foreach (var player in gamePlayers)
                 {
+                    ApplyYears(player, numberOfYears);
+
                     await hubContext.Clients.Client(player.ConnectionId).ShowPlayerQuestionAnswers(
                         question.Answers.Select(a => a.Text).ToArray(),
                         (int)player.Savings,

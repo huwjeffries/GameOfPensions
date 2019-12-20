@@ -49,7 +49,14 @@ connection.on("ShowPlayerQuestionAnswers", function (answers, savings, pensionPo
     $("#answers-view").show();
     var view = $("#answers-view");
 
-    $("#balance").html("<div>Savings: £" + savings + "</div><div>Pension: £" + pensionPot + "</div><div>Property: £" + property + "</div>");
+    var balance = "<div>Savings: £" + savings + "</div>";
+    if (pensionPot > 0) {
+        balance += "<div>Pension: £" + pensionPot + "</div>";
+    }
+    if (property > 0) {
+        balance += "<div>Property: £" + property + "</div>"
+    }
+    $("#balance").html(balance);
 
     answers.forEach((answer, i) => {
         var hyperLink = $('<a/>', {
