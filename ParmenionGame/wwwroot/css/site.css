@@ -149,3 +149,9 @@ body {
 #balance {
     font-size: 0.7em;
 }
+
+#prompt {
+    position: absolute;
+    bottom: 0;
+    font-size: 0.7em;
+}
