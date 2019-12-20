@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -53,17 +54,19 @@ namespace ParmenionGame
         /// </summary>
         public async Task RegisterPlayer(string code, string name, string playerConnectionId)
         {
-            logger.LogDebug($"'{name}' joined game '{code}'");
             //Check the player isn't already registered.
             if (!gamePlayers.Any(p => p.ConnectionId == playerConnectionId))
             {
-                if(code.ToLower() == gameCode)
+                if (code.ToLower() == gameCode)
                 {
-                    name = name.Length > 20 ? name.Substring(0, 20)+"..." : name;
+                    name = new Regex("[^A-Za-z ]").Replace(name, "");
+                    name = name.Length > 20 ? name.Substring(0, 20) + "..." : name;
                     gamePlayers.Add(new Player(name, playerConnectionId)); //TOOD - sanitise the name input.
                     await hubContext.Clients.Client(dashboardConnectionId).ShowDashboardPlayerList(gamePlayers.Select(p => p.Name).ToArray());
                     await hubContext.Clients.Client(playerConnectionId).ShowPlayerAcceptedGameCode();
-                } else
+                    logger.LogDebug($"'{name}' joined game '{code}'");
+                }
+                else
                 {
                     await hubContext.Clients.Client(playerConnectionId).ShowPlayerIncorrectGameCode();
                 }
