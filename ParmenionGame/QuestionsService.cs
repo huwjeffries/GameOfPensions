@@ -43,7 +43,7 @@ namespace ParmenionGame
             },            
             new Question()
             {
-                QuestionText = "You get married! (Congratulations!). Do you want to have children?",
+                QuestionText = "You get married! Congratulations! Do you want to have children?",
                 Prompt = "Parmenion offers some fantastic benefits to parents.",
                 Answers = new[] {
                     new Answer("None", p => p.Income *= 1.5m),
@@ -80,7 +80,7 @@ namespace ParmenionGame
             new Question()
             {
                 QuestionText = "You have suffered a serious injury.",
-                Prompt = "Parmenion's Private Medical Cover covers a wide range of illnesses and conditions",
+                Prompt = "Parmenion's Private Medical Cover and Income Protection covers a wide range of illnesses and conditions",
                 Answers = new []{
                     new Answer("Ouch!", p => p.Savings -= p.Insurance ? 0m : p.Income / 2)
                 },
